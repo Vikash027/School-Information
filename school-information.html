@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+button {
+    margin-bottom: 10px;
+}
+
+.result {
+    margin-bottom: 20px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Count Calculation</h2>
+        <div id="countCalculation"></div>
+
+        <h2>Find Top Student</h2>
+        <div id="findTopStudent"></div>
+
+        <h2>Add New Department</h2>
+        <button id="addNewDeptButton">Add New Department</button>
+        <div id="addNewDept"></div>
+
+        <h2>Highest Student Count Department</h2>
+        <div id="highestStudentCountDepartment"></div>
+
+        <h2>Greeting Message</h2>
+        <div id="greetingMessage"></div>
+    </div>
+
+    <script>
+        const school = {
+    name: "XYZ School",
+    establishYear: 1990,
+    departments: {
+        math: { teachers: 5, students: 150 },
+        science: { teachers: 4, students: 120 },
+        history: { teachers: 3, students: 100 },
+        english: { teachers: 4, students: 130 },
+    },
+    courses: ["math", "science", "history", "english"],
+    students: [
+        { name: "Alice", className: "Grade 5", scores: { math: 95, science: 88, history: 85, english: 92 } },
+        { name: "Bob", className: "Grade 4", scores: { math: 80, science: 78, history: 92, english: 85 } },
+        { name: "Charlie", className: "Grade 5", scores: { math: 88, science: 90, history: 78, english: 88 } },
+        { name: "Diana", className: "Grade 4", scores: { math: 92, science: 85, history: 88, english: 90 } },
+    ],
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    displayCountCalculation();
+    displayFindTopStudent();
+    displayAddNewDept();
+    displayHighestStudentCountDepartment();
+    displayGreetingMessage();
+});
+
+function displayCountCalculation() {
+    const { math, history } = school.departments;
+    const { teachers: mathTeachersCount, students: mathStudentsCount } = math;
+    const { teachers: historyTeachersCount, students: historyStudentsCount } = history;
+    
+    const countCalculationDiv = document.getElementById("countCalculation");
+    countCalculationDiv.innerHTML = `
+        <div class="result">Math Teachers Count: ${mathTeachersCount}</div>
+        <div class="result">History Teachers Count: ${historyTeachersCount}</div>
+        <div class="result">Math Students Count: ${mathStudentsCount}</div>
+        <div class="result">History Students Count: ${historyStudentsCount}</div>
+    `;
+}
+
+function displayFindTopStudent() {
+    const topStudentMath = findTopStudent('math');
+    const findTopStudentDiv = document.getElementById("findTopStudent");
+    findTopStudentDiv.textContent = JSON.stringify(topStudentMath, null, 2);
+}
+
+function findTopStudent(courseName) {
+    const { students } = school;
+    let topStudent = null;
+    let maxScore = -1;
+    
+    students.forEach(student => {
+        const { scores } = student;
+        if (scores[courseName] > maxScore) {
+            topStudent = student;
+            maxScore = scores[courseName];
+        }
+    });
+
+    return topStudent;
+}
+
+function displayAddNewDept() {
+    const addNewDeptButton = document.getElementById("addNewDeptButton");
+    addNewDeptButton.addEventListener("click", () => {
+        const newDepartment = { art: { teachers: 2, students: 50 } };
+        const updatedSchool = addNewDept(school, newDepartment);
+        const addNewDeptDiv = document.getElementById("addNewDept");
+        addNewDeptDiv.textContent = JSON.stringify(updatedSchool.departments, null, 2);
+    });
+}
+
+function addNewDept(school, newDepartment) {
+    const updatedDepartments = { ...school.departments, ...newDepartment };
+    return { ...school, departments: updatedDepartments };
+}
+
+function displayHighestStudentCountDepartment() {
+    const highestStudentCountDept = highestStudentCountDepartment();
+    const highestStudentCountDepartmentDiv = document.getElementById("highestStudentCountDepartment");
+    highestStudentCountDepartmentDiv.textContent = highestStudentCountDept;
+}
+
+function highestStudentCountDepartment() {
+    const { departments } = school;
+    let maxStudentCount = -1;
+    let departmentWithMaxStudents = '';
+    
+    for (const department in departments) {
+        if (departments.hasOwnProperty(department)) {
+            const { students } = departments[department];
+            if (students > maxStudentCount) {
+                maxStudentCount = students;
+                departmentWithMaxStudents = department;
+            }
+        }
+    }
+
+    return departmentWithMaxStudents;
+}
+
+function displayGreetingMessage() {
+    const greetingMessageDiv = document.getElementById("greetingMessage");
+    greetingMessageDiv.innerHTML = `
+        <div class="result">${generateGreeting("Alice")}</div>
+        <div class="result">${generateGreeting("Bob", "Spanish")}</div>
+        <div class="result">${generateGreeting("Charlie", "French")}</div>
+    `;
+}
+
+function generateGreeting(name, language = 'English') {
+    const greetings = {
+        English: `Hello, ${name}!`,
+        Spanish: `¡Hola, ${name}!`,
+        French: `Bonjour, ${name}!`
+    };
+    
+    return greetings[language] || `Hello, ${name}!`;
+}
+
+    </script>
+</body>
+</html>
